@@ -25,6 +25,7 @@ const galleryModel = new SimpleLightbox('.gallery a', {
 
 let page = 1;
 
+
 formEL.addEventListener("submit", onSubmitForm);
    
 function onSubmitForm(evt) {
@@ -70,13 +71,33 @@ loadMore.addEventListener("click", onClickLoadMore);
 
 async function onClickLoadMore() {
     page += 1;
+    loadMore.disabled = true;
+
     try {
         const data = await searchImage(inputData, page);
         console.log(data);
         galleryList.insertAdjacentHTML("beforeend", imagesTemplate(data.hits));
-
+        galleryModel.refresh();
+        if (page >= 34) {
+            loadMore.classList.add("is-hiding");
+            iziToast.show({
+              message: "We are sorry, but you've reached the end of search results.",
+              messageColor: "black",
+              backgroundColor: "lightblue",
+             position: "topRight",
+          });
+        }
+        const card = document.querySelector(".gallery-item");
+        const cardHeight = card.getBoundingClientRect().height;
+        window.scrollBy({
+            left: 0,
+            top: cardHeight *2,
+            behavior: "smooth",
+        })
     } catch(error) {
 
+    } finally {
+        loadMore.disabled = false;
     }
 
 }
