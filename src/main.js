@@ -23,19 +23,23 @@ const galleryModel = new SimpleLightbox('.gallery a', {
     captionDelay: 250,
 });
 
-let page = 1;
+
+let InputValue = null;
+let page = null;
+
 formEL.addEventListener("submit", onSubmitForm);
-   
+
 function onSubmitForm(evt) {
     evt.preventDefault();
-   let InputValue = evt.target.elements.search.value.trim();
+    page = 1;
+   InputValue = evt.target.elements.search.value.trim();
     if (InputValue === "") {
       return  
     };
     evt.target.reset();
     loaderEl.classList.remove("is-hiding");
     searchImage(InputValue, page).then(data => {
-        console.log(data);
+        // console.log(data);
         if (data.total === 0) {
          iziToast.show({
               message: 'Sorry, there are no images matching your search query. Please try again!',
@@ -59,11 +63,9 @@ function onSubmitForm(evt) {
     }).finally(() => {
         loaderEl.classList.add("is-hiding");
         loadMore.classList.remove("is-hiding");
-            });
-    return InputValue;
-};
+    });
 
-let inputData = "cats";
+};
 
 loadMore.addEventListener("click", onClickLoadMore);
 
@@ -72,8 +74,8 @@ async function onClickLoadMore() {
     loadMore.disabled = true;
 
     try {
-        const data = await searchImage(inputData, page);
-        console.log(data);
+        const data = await searchImage(InputValue, page);
+        // console.log(data);
         galleryList.insertAdjacentHTML("beforeend", imagesTemplate(data.hits));
         galleryModel.refresh();
         if (page >= 34) {
@@ -92,12 +94,16 @@ async function onClickLoadMore() {
             top: cardHeight *2,
             behavior: "smooth",
         })
-    } catch(error) {
-
+    } catch (error) {
+        iziToast.show({
+            message: 'Internal server error!',
+            messageColor: 'white',
+            backgroundColor: 'red',
+            position: 'topRight',
+        })
     } finally {
         loadMore.disabled = false;
     }
-
 }
 
 
