@@ -15,6 +15,7 @@ import "izitoast/dist/css/iziToast.min.css";
 const formEL = document.querySelector(".form");
 const galleryList = document.querySelector(".gallery");
 const loaderEl = document.querySelector(".loader");
+const loadMore = document.querySelector(".load-more-btn");
 
 const galleryModel = new SimpleLightbox('.gallery a', {
     captionsData: "alt",
@@ -22,7 +23,11 @@ const galleryModel = new SimpleLightbox('.gallery a', {
     captionDelay: 250,
 });
 
-formEL.addEventListener("submit", evt => {
+let page = 1;
+
+formEL.addEventListener("submit", onSubmitForm);
+   
+function onSubmitForm(evt) {
     evt.preventDefault();
     const InputValue = evt.target.elements.search.value.trim();
     if (InputValue === "") {
@@ -30,8 +35,8 @@ formEL.addEventListener("submit", evt => {
     };
     evt.target.reset();
     loaderEl.classList.remove("is-hiding");
-    searchImage(InputValue).then(data => {
-        // console.log(data);
+    searchImage(InputValue, page).then(data => {
+        console.log(data);
         if (data.total === 0) {
          iziToast.show({
               message: 'Sorry, there are no images matching your search query. Please try again!',
@@ -54,9 +59,27 @@ formEL.addEventListener("submit", evt => {
           
     }).finally(() => {
         loaderEl.classList.add("is-hiding");
+        loadMore.classList.remove("is-hiding");
             });
-   
-});
+    return InputValue;
+};
+
+let inputData = "cats";
+
+loadMore.addEventListener("click", onClickLoadMore);
+
+async function onClickLoadMore() {
+    page += 1;
+    try {
+        const data = await searchImage(inputData, page);
+        console.log(data);
+        galleryList.insertAdjacentHTML("beforeend", imagesTemplate(data.hits));
+
+    } catch(error) {
+
+    }
+
+}
 
 
 

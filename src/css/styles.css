@@ -136,3 +136,21 @@ line-height: 24px;
 line-height: 2;letter-spacing: 0.04em;
 color: #2e2f42;
 }
+
+.load-more-btn {
+  font-family: "Montserrat", sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 24px; 
+    line-height: 1.5;
+    letter-spacing: 0.04em;
+    color: #fff;
+  border-radius: 8px;
+    padding: 8px 16px;
+    width: 125px;
+    height: 40px;
+    background: #4e75ff;
+    border: none;
+    display: block;
+    margin: 0 auto;
+}
