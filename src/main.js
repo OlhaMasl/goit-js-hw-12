@@ -24,13 +24,11 @@ const galleryModel = new SimpleLightbox('.gallery a', {
 });
 
 let page = 1;
-
-
 formEL.addEventListener("submit", onSubmitForm);
    
 function onSubmitForm(evt) {
     evt.preventDefault();
-    const InputValue = evt.target.elements.search.value.trim();
+   let InputValue = evt.target.elements.search.value.trim();
     if (InputValue === "") {
       return  
     };
