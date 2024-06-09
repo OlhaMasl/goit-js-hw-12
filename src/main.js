@@ -26,6 +26,7 @@ const galleryModel = new SimpleLightbox('.gallery a', {
 
 let InputValue = null;
 let page = null;
+let totalPages;
 
 formEL.addEventListener("submit", onSubmitForm);
 
@@ -51,6 +52,11 @@ function onSubmitForm(evt) {
         const markup = imagesTemplate(data.hits);
         galleryList.innerHTML = markup;
         galleryModel.refresh();
+        totalPages = Math.ceil(data.totalHits / data.hits.length);
+        if (totalPages > 1) {
+           loadMore.classList.remove("is-hiding"); 
+        }
+        
     }).catch(error => {
         // console.log(error);
         iziToast.show({
@@ -62,7 +68,6 @@ function onSubmitForm(evt) {
           
     }).finally(() => {
         loaderEl.classList.add("is-hiding");
-        loadMore.classList.remove("is-hiding");
     });
 
 };
@@ -72,13 +77,14 @@ loadMore.addEventListener("click", onClickLoadMore);
 async function onClickLoadMore() {
     page += 1;
     loadMore.disabled = true;
-
+    loaderEl.classList.remove("is-hiding");
     try {
         const data = await searchImage(InputValue, page);
         // console.log(data);
         galleryList.insertAdjacentHTML("beforeend", imagesTemplate(data.hits));
         galleryModel.refresh();
-        if (page >= 34) {
+        if (page >= totalPages) {
+            loadMore.removeEventListener("click", onClickLoadMore);
             loadMore.classList.add("is-hiding");
             iziToast.show({
               message: "We are sorry, but you've reached the end of search results.",
@@ -103,9 +109,8 @@ async function onClickLoadMore() {
         })
     } finally {
         loadMore.disabled = false;
+        loaderEl.classList.add("is-hiding");
     }
 }
-
-
 
      
